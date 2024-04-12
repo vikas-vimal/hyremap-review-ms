@@ -11,7 +11,7 @@ import java.util.Optional;
 @Service
 public class ReviewServiceImpl implements ReviewService {
 
-    private ReviewRepository reviewRepository;
+    private final ReviewRepository reviewRepository;
 
     public ReviewServiceImpl(ReviewRepository reviewRepository) {
         this.reviewRepository = reviewRepository;
@@ -24,7 +24,10 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public List<Review> getAllReviewsByCompanyId(Long cid) {
-        return this.reviewRepository.findByCompanyId(cid);
+        if(cid!=null){
+            return this.reviewRepository.findByCompanyId(cid);
+        }
+        return this.reviewRepository.findAll();
     }
 
     @Override
@@ -33,7 +36,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public Review addReview(Long cid, Review body) {
+    public Review addReview(Review body) {
 //        Company companyExists = this.companyService.findCompanyById(cid);
 //        if(companyExists == null) return null;
         body.setId(null);
@@ -42,7 +45,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public Review updateReviewById(Long companyId, Long id, Review body) {
+    public Review updateReviewById(Long id, Review body) {
         Optional<Review> foundReview = this.reviewRepository.findById(id);
         if(foundReview.isPresent()){
             Review review = foundReview.get();
@@ -58,7 +61,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public boolean deleteReviewById(Long companyId, Long id) {
+    public boolean deleteReviewById(Long id) {
         try {
             this.reviewRepository.deleteById(id);
             return true;
